@@ -1,6 +1,5 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import os
-import requests
 
 app = Flask(__name__)
 
@@ -12,48 +11,12 @@ def home():
 def ping():
     return jsonify({"status": "ok"})
 
-@app.route("/listar-pendientes")
-def listar_pendientes():
-    board_id = 10359577  # ← REEMPLAZA con tu verdadero board ID
-    status_col_id = "status"
+@app.route("/get-token")
+def get_token():
+    clave_usuario = request.args.get("clave")
+    CLAVE_CORRECTA = "mondaygpt123"  # Cambia esta clave si quieres
 
-    query = """
-    query ($board: [Int]) {
-      boards(ids: $board) {
-        items {
-          id
-          name
-          column_values(ids: ["%s"]) {
-            text
-          }
-        }
-      }
-    }
-    """ % status_col_id
+    if clave_usuario != CLAVE_CORRECTA:
+        return jsonify({"error": "No autorizado"}), 401
 
-    variables = {"board": board_id}
-    headers = {
-        "Authorization": os.environ["MONDAY_API_KEY"]
-    }
-
-    response = requests.post(
-        "https://api.monday.com/v2",
-        json={"query": query, "variables": variables},
-        headers=headers
-    )
-
-    if response.status_code != 200:
-        return jsonify({"error": "No se pudo consultar Monday"}), 500
-
-    data = response.json()
-    try:
-        items = data["data"]["boards"][0]["items"]
-        pendientes = [
-            {"id": item["id"], "nombre": item["name"]}
-            for item in items
-            if item["column_values"][0]["text"] != "Done"
-        ]
-        return jsonify({"pendientes": pendientes})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+    return jsonify({"token": os.environ["MONDAY_API_KEY"]})
