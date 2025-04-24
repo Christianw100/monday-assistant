@@ -14,7 +14,7 @@ def ping():
 
 @app.route("/listar-pendientes")
 def listar_pendientes():
-    board_id = TU_BOARD_ID_AQUI  # ← REEMPLAZA con tu verdadero board ID
+    board_id = 10359577  # ← REEMPLAZA con tu verdadero board ID
     status_col_id = "status"
 
     query = """
