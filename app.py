@@ -9,5 +9,3 @@ def index():
 @app.route("/ping")
 def ping():
     return jsonify({"status": "ok"})
-
-# no incluyas app.run() en despliegue de Vercel
