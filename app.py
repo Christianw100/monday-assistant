@@ -10,5 +10,4 @@ def index():
 def ping():
     return jsonify({"status": "ok"})
 
-if __name__ == "__main__":
-    app.run()
+# no incluyas app.run() en despliegue de Vercel
